@@ -63,7 +63,7 @@ class Frontoffice extends CI_Controller {
 	//===========================================TAMBAHAN KHUSUS UNTUK CRUID VERIFIKASI=====================================================
 	public function tampilkan_tabel_terusan_new_verifikasi(){
 		//$Recordset=$this->user_defined_query_controller_as_array($query='select * from surat_masuk',$token="andisinra");
-		$this->model_frommyframework->reset_counter_notifikasi($counter_table='tbcounter_notifikasi',$kolom_rujukan=array('nama_kolom'=>'idcounter_notifikasi','nilai'=>5),$kolom_target='nilai_counter');
+		$this->model_frommyframework->reset_counter_notifikasi($counter_table='tbcounter_notifikasi',$kolom_rujukan=array('nama_kolom'=>'idcounter_notifikasi','nilai'=>3),$kolom_target='nilai_counter');
 		$table='surat_terusan_baru';
 		$nama_kolom_id='idsurat_terusan';
 		$this->tampil_tabel_cruid_new_verifikasi($table,$nama_kolom_id,$order='desc',$limit=20,$currentpage=1,$page_awal=1,$jumlah_page_tampil=4,$mode=NULL,$kolom_cari=NULL,$nilai_kolom_cari=NULL);
@@ -509,6 +509,119 @@ class Frontoffice extends CI_Controller {
    }
 
    //ok cek point 1
+
+   public function selesai(){
+		$key=$_POST['key'];
+		$isi_key=$_POST['data'];$surat=$this->user_defined_query_controller_as_array($query="select * from surat_terusan_baru where $key=".$isi_key,$token="andisinra");
+		if(!$surat){
+			alert('Surat yang dimaksud tidak tercatat');
+		}else{
+			foreach($surat[0] as $key_s=>$isi){
+				if(is_string($key_s)){
+					$data_post[$key_s]['nilai']=$isi;
+					$data_post[$key_s]['file']=NULL;
+				}
+			}
+
+			echo "
+				<div style='padding:5px;'>
+				<form>
+					<label for='message_pending'>Keterangan surat telah diselesaikan:</label>
+					<textarea class='form-group' id='message_pending' name='message_pending' style='width:100%; height:200px;'></textarea>
+				</form>
+				<button class=\"btn btn-success\" id=\"selesai_area$isi_key\" style=\"width:100%;\"><i class='fas fa-pause fa-sm text-white-100'></i> Selesai</button>
+				</div>
+				<script>
+					$(document).ready(function(){
+						$(\"#selesai_area$isi_key\").click(function(){
+							var loading = $(\"#pra_verifikasi_sedang\");
+							var tampilkan = $(\"#penampil_verifikasi_sedang\");
+							var message_pending_var = $(\"#message_pending\").val();
+							tampilkan.hide();
+							loading.fadeIn(); 
+							$.post('".site_url('/Frontoffice/proses_selesai')."',{key:\"$key\",data:\"$isi_key\",message_pending:message_pending_var},
+							function(data,status){
+								//alert('DALAM 1');
+								//BAGIAN MENCATAT LOG KE BANKDATA
+								$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data,{ data:data},
+								function(data_log,status_log){
+								});
+								alert('Status surat berubah menjadi selesai...')
+
+								//BAGIAN REFRESH PAGE
+								document.getElementById('close_ok').click(); //WORK!....INI ADALAH CARA MENUTUP MODAL SECARA LIVE...
+								var loading1 = $(\"#pra_tabel\");
+								var tampilkan1 = $(\"#penampil_tabel\");
+								tampilkan1.hide();
+								loading1.fadeIn(); 
+								$.post('".site_url('/Frontoffice/tampilkan_tabel_terusan_new_verifikasi')."',{key_refresh:\"okbro\",data_refresh:\"okbro\" },
+								function(data_refresh,status_refresh){
+									loading1.fadeOut();
+									tampilkan1.html(data_refresh);
+									tampilkan1.fadeIn(2000);
+								});
+							});
+						});
+					});
+				</script>
+			";
+
+		}
+	}
+
+	public function proses_selesai(){
+		//echo "OK BRO, INI TEMPAT PENDING";
+		$key=$_POST['key'];
+		$isi_key=$_POST['data'];
+		$message_pending=$_POST['message_pending'];
+		$surat=$this->user_defined_query_controller_as_array($query="select * from surat_terusan_baru where $key=".$isi_key,$token="andisinra");
+		if(!$surat){
+			alert('Surat yang dimaksud tidak tercatat');
+		}else{
+			foreach($surat[0] as $key_s=>$isi){
+				if(is_string($key_s)){
+					$data_post[$key_s]['nilai']=$isi;
+					$data_post[$key_s]['file']=NULL;
+				}
+			}
+ 
+			$kiriman=array();
+			foreach($data_post as $key_k=>$k){
+					array_push($kiriman,$k['nilai']);
+				}
+		}
+ 
+		//Update status surat ke status=dipending:
+		$kolom_rujukan['nama_kolom']=$key;
+		$kolom_rujukan['nilai']=$isi_key;
+		$kolom_target='status_surat';
+		$data[$kolom_target]='selesai';
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+		
+		//Update timestamp_dipending:
+		$kolom_rujukan['nama_kolom']=$key;
+		$kolom_rujukan['nilai']=$isi_key;
+		$kolom_target='timestamp_dikembalikan';
+		$data[$kolom_target]=implode("-",array (date("d/m/Y"),mt_rand (1000,9999),microtime()));
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+ 
+		$kiriman[26]=$data[$kolom_target];
+ 
+		//Update keterangan alasan dipending:
+		$kolom_rujukan['nama_kolom']=$key;
+		$kolom_rujukan['nilai']=$isi_key;
+		$kolom_target='keterangan';
+		$data[$kolom_target]=$message_pending;
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+ 
+		$kiriman[19]=$message_pending;
+		$kiriman[20]='selesai';
+		
+		//Kirim balik untuk di log verifikasi_new() lewat call ajax dari verifikasi_new()
+		//array_unshift($kiriman,NULL); ga usah di sekretariat karena format surat_masuk sudah sesuai format tabel log_surat_masuk di bankdata
+		$data_rekord_terenkripsi=$this->enkripsi->enkapsulasiData($kiriman);
+		echo $data_rekord_terenkripsi;
+	}
 
    /**
 	* bagimana logikanya kalo pending?
@@ -12963,13 +13076,14 @@ class Frontoffice extends CI_Controller {
 		echo "
 		<button class=\"btn btn-lg btn-info shadow-sm kotak\" id=\"baca_surat_masuk\"><i class=\"fas fa-envelope-open fa-lg text-white-100\"></i>
 		<span id=\"counter_surat_masuk_masuk_besar\" class=\"badge badge-danger badge-counter\" style=\"margin-left:-15px;top:-10px;\"></span>
-		<br>Baca Surat Masuk <br>[INBOX]</button>
+		<br>Baca Surat Terusan <br>[FrontOffice]</button>
 		<button style=\"cursor:pointer;color:white;\" class=\"kotak d-sm-inline-block btn btn-lg btn-success shadow-sm\" id=\"buat_catatan\" ><i class=\"fas fa-file-alt fa-lg text-white-100\"></i><br>Buat Dokumen <br>[MiniOffice]</button>
 		<!-- Script untuk pemanggilan ajax -->
 		<script>      
 		$(document).ready(function(){
+			//xcxc
 			var tampilkan = $(\"#counter_surat_masuk_masuk_besar\");
-			$.post('".site_url('/Frontoffice/baca_counter_surat_masuk/echo')."',{ data:\"okbro\"},
+			$.post('".site_url('/Frontoffice/baca_counter_surat_terusan/echo')."',{ data:\"okbro\"},
 			function(data,status){
 			tampilkan.html(data);
 			});
@@ -12983,7 +13097,7 @@ class Frontoffice extends CI_Controller {
               var tampilkan = $(\"#penampil_tabel\");
               tampilkan.hide();
               loading.fadeIn(); 
-              $.post('".site_url('/Frontoffice/tampilkan_tabel_new')."',{ data:\"okbro\"},
+              $.post('".site_url('/Frontoffice/tampilkan_tabel_terusan_new_verifikasi')."',{ data:\"okbro\"},
               function(data,status){
                 loading.fadeOut();
                 tampilkan.html(data);

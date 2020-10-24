@@ -140,6 +140,10 @@ class Viewfrommyframework {
                                     $warna_badge='primary';
                                     $time=explode('-',$isi['timestamp_diteruskan']);
                                     echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                } else if($isi[$k]=='selesai'){
+                                    $warna_badge='success';
+                                    $time=explode('-',$isi['timestamp_dikembalikan']);
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">SELESAI</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
                                 } else {
                                     $warna_badge='info';
                                     echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span>";
@@ -157,7 +161,7 @@ class Viewfrommyframework {
                     <td colspan=".$size." align='justify'>
                     <button class=\"d-sm-inline-block btn btn-sm btn-success shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"isiSurat$keyisi\" data-toggle=\"modal\" data-target=\"#modal_baca_surat_new\"><i class='fas fa-envelope-open fa-sm text-white-100'></i> <br>Buka Surat</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-info shadow-sm kotak\" style=\"width:15.5%;margin-top:5px;\" id=\"berkasSurat$keyisi\" data-toggle=\"modal\" data-target=\"#modal_baca_surat_new\"><i class='fas fa-folder-open fa-sm text-white-100'></i> <br>Berkas Pendukung</button>
-                    <button class=\"d-sm-inline-block btn btn-sm btn-primary shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"teruskan_new$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi\"><i class='fas fa-forward fa-sm text-white-100'></i> <br>Teruskan</button>
+                    <button class=\"d-sm-inline-block btn btn-sm btn-primary shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"selesai$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi\"><i class='fas fa-archive fa-sm text-white-100'></i> <br>SELESAI</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-warning shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"pending$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi_sedang\"><i class='fas fa-pause fa-sm text-white-100'></i> <br>Pending</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-danger shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"tolak$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi_sedang\"><i class='fas fa-backward fa-sm text-white-100'></i> <br>Tolak</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-info shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"detail_surat$keyisi\" ><i class='fas fa-cog fa-sm text-white-100'></i> <br>Detail</button>
@@ -219,6 +223,20 @@ class Viewfrommyframework {
                             loading.fadeIn(); 
                             $.post('".site_url('/Frontoffice/untuk_menampilkan_modal_alamat')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\" },
                             function(data,status){
+                                loading.fadeOut();
+                                tampilkan.html(data);
+                                tampilkan.fadeIn(2000);
+                            });
+                        });
+
+                        $(\"#selesai$keyisi\").click(function(){
+                            var loading = $(\"#pra_verifikasi\");
+                            var tampilkan = $(\"#penampil_verifikasi\");
+                            tampilkan.hide();
+                            loading.fadeIn(); 
+                            $.post('".site_url('/Frontoffice/selesai')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\" },
+                            function(data,status){
+                                //alert('OK BRO SELESAI DALAM');
                                 loading.fadeOut();
                                 tampilkan.html(data);
                                 tampilkan.fadeIn(2000);

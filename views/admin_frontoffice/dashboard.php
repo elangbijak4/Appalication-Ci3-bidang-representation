@@ -70,8 +70,8 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded" onclick='$("#cetak_laporan").show();$("#cetak_laporan_periodik_agenda").hide();'>
             <h6 class="collapse-header">Ruang Virtual:</h6>
-            <a class="collapse-item" style="cursor:pointer;" id="surat_berkas" >Surat Masuk</a>
-            <a class="collapse-item" style="cursor:pointer;" id="surat_berkas_terusan" >Surat Terusan Sekretariat</a>
+            <a class="collapse-item" style="cursor:pointer;" id="surat_berkas_terusan" >Surat Terusan FrontOffice</a>
+            <a class="collapse-item" style="cursor:pointer;" id="surat_berkas" >Surat Masuk Bidang</a>
             <a class="collapse-item" style="cursor:pointer;" id="surat_berkas_balasan" >Surat Balasan Sekretariat</a>
             <a style="cursor:pointer;color:white;margin-left:20px;margin-bottom:10px;" class="d-sm-inline-block btn btn-sm btn-warning shadow-sm unggah_surat_berkas" data-toggle="modal" data-target="#myModal_suratbaru" id="unggah_surat_berkas" ><i class="fas fa-paper-plane fa-sm text-white-100"></i> Kirim Surat Baru </a>
             <a style="cursor:pointer;color:white;margin-left:20px;margin-bottom:10px;" class="d-sm-inline-block btn btn-sm btn-success shadow-sm buat_surat_baru" id="buat_surat_baru" data-toggle="modal" data-target="#myModal_suratbaru"><i class="fas fa-edit fa-sm text-white-100"></i> Menulis Surat Baru</a>
@@ -677,7 +677,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
                     var tampilkan = $("#penampil_tabel");
                     tampilkan.hide();
                     loading.fadeIn(); 
-                    $.post('<?php echo site_url('/Frontoffice/tampilkan_tabel_surat_terusan_new');?>',{ data:"okbro"},
+                    $.post('<?php echo site_url('/Frontoffice/tampilkan_tabel_terusan_new_verifikasi');?>',{ data:"okbro"},
                     function(data,status){
                       loading.fadeOut();
                       tampilkan.html(data);
