@@ -73,6 +73,7 @@ class Viewfrommyframework {
                 
                 $i=0;
                 foreach($Recordset as $keyisi=>$isi){
+                    $enkrip_isi=$this->CI->enkripsi->enkapsulasiData($isi);
                     echo "<tr>";
                     //$tampung=array_values($isi); 
                     $i++;
@@ -114,6 +115,26 @@ class Viewfrommyframework {
                                 if($k=='timestamp_masuk'){
                                     $temporer=explode('-',$isi[$k]);
                                     echo "<td align=left valign=top>".$temporer[0]."</td>";
+                                } else if(($k=='keterangan')&&(isset($isi['keterangan']))&&($isi['keterangan']!='')) {
+                                    echo "<td align=left valign=top>
+                                    <button class=\"d-sm-inline-block btn btn-sm btn-info shadow-sm kotak\"  style=\"width:100px; height:100%; margin-top:20px; margin-bottom:0px; margin-top:5px;\" id=\"lihat_keterangan$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi\">Lihat Keterangan</button>
+                                    </td>
+                                    <script>
+                                    $(document).ready(function(){
+                                        $(\"#lihat_keterangan$keyisi\").click(function(){
+                                            var loading = $(\"#pra_verifikasi\");
+                                            var tampilkan = $(\"#penampil_verifikasi\");
+                                            //alert('lihat keterangan');
+                                            tampilkan.hide();
+                                            loading.fadeIn(); 
+                                            loading.fadeOut();
+                                            tampilkan.html('<div align=\"left\" style=\"margin-left:20px;\"><h4>Keterangan sebelumnya:</h4><br>".$isi['keterangan']."</div>');
+                                            tampilkan.fadeIn(2000);
+                                            
+                                        });
+                                    });
+                                    </script>
+                                    ";
                                 } else {
                                     echo "<td align=left valign=top>".$isi[$k]."</td>";
                                 }
@@ -127,26 +148,45 @@ class Viewfrommyframework {
                                 if($isi[$k]=='dibaca'){
                                     $warna_badge='success';
                                     $time=explode('-',$isi['timestamp_baca']);
-                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 } else if($isi[$k]=='ditolak'){
                                     $warna_badge='danger';
                                     $time=explode('-',$isi['timestamp_tolak']);
-                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 } else if($isi[$k]=='dipending'){
                                     $warna_badge='warning';
                                     $time=explode('-',$isi['timestamp_dipending']);
-                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 } else if($isi[$k]=='diteruskan'){
                                     $warna_badge='primary';
                                     $time=explode('-',$isi['timestamp_diteruskan']);
-                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 } else if($isi[$k]=='selesai'){
                                     $warna_badge='success';
                                     $time=explode('-',$isi['timestamp_dikembalikan']);
-                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">SELESAI</span><br><span class=\"badge badge-$warna_badge\">".$time[0]."</span>";
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">SELESAI</span>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
+                                } else if($isi[$k]=='dibalas'){
+                                    $warna_badge='success';
+                                    $time=explode('-',$isi['timestamp_dikembalikan']);
+                                    echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">DIBALAS</span>";
+                                    if(isset($time[0])&&($time[0]!='')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 } else {
                                     $warna_badge='info';
+                                    $time=explode('-',$isi['timestamp_masuk']);
                                     echo "<td align=left valign=top><span class=\"badge badge-$warna_badge\">".$isi[$k]."</span>";
+                                    if(isset($time[0])&&($time[0]!='')&&($isi[$k]!='masuk')) echo "<span class=\"badge badge-$warna_badge\">Tgl: ".$time[0]."</span>";
+                                    if(isset($time[1]))echo "<br><span class=\"badge badge-$warna_badge\">Jam: ".$time[1]."</span>";
                                 }
                                 echo "</td>";
                             }
@@ -165,7 +205,7 @@ class Viewfrommyframework {
                     <button class=\"d-sm-inline-block btn btn-sm btn-warning shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"pending$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi_sedang\"><i class='fas fa-pause fa-sm text-white-100'></i> <br>Pending</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-danger shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"tolak$keyisi\" data-toggle=\"modal\" data-target=\"#modal_verifikasi_sedang\"><i class='fas fa-backward fa-sm text-white-100'></i> <br>Tolak</button>
                     <button class=\"d-sm-inline-block btn btn-sm btn-info shadow-sm kotak\" style=\"width:13%;margin-top:5px;\" id=\"detail_surat$keyisi\" ><i class='fas fa-cog fa-sm text-white-100'></i> <br>Detail</button>
-                    <button class=\"d-sm-inline-block btn btn-sm btn-primary shadow-sm kotak\" style=\"width:15.5%;margin-top:5px;\" id=\"unggah_balasan$keyisi\" data-toggle=\"modal\" data-target=\"#modal_baca_surat_new\"><i class='fas fa-upload fa-sm text-white-100'></i> <br>Unggah Balasan</button>
+                    <button class=\"d-sm-inline-block btn btn-sm btn-primary shadow-sm kotak\" style=\"width:15.5%;margin-top:5px;\" id=\"unggah_balasan$keyisi\" data-toggle=\"modal\" data-target=\"#modal_untuk_kirim_surat_balasan\"><i class='fas fa-upload fa-sm text-white-100'></i> <br>Unggah Balasan</button>
                     </td></tr>";
                     
                     echo "<tr id=\"rincian_surat_2$keyisi\">";
@@ -212,6 +252,7 @@ class Viewfrommyframework {
                     $direktori_berkas=$this->CI->enkripsi->strToHex($this->CI->enkripsi->enkripSimetri_data($isi[$nama_kolom_direktori_surat['berkas']]));
                     $surat=explode('.',$isi[$nama_kolom_direktori_surat['surat']]);
                     $berkas=explode('.',$isi[$nama_kolom_direktori_surat['berkas']]);
+                    $url_balik=$this->CI->enkripsi->enkapsulasiData(site_url("/Frontoffice/frontoffice_admin"));
                     echo "
                     <script>
 					$(document).ready(function(){
@@ -229,14 +270,38 @@ class Viewfrommyframework {
                             });
                         });
 
+                        $(\"#unggah_balasan$keyisi\").click(function(){
+                            var loading = $(\"#pra_unggah_surat_balasan\");
+                            var tampilkan = $(\"#penampil_unggah_surat_balasan\");
+                            tampilkan.hide();
+                            loading.fadeIn(); 
+                            //$.post('".site_url('/Frontoffice/unggah_surat_frontoffice_balasan')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\",isi:\"".$enkrip_isi."\" },
+                            $.post('".$this->CI->config->item('bank_data')."/index.php/Frontoffice/unggah_surat_frontoffice_balasan"."',{isi:\"".$enkrip_isi."\", url_balik:\"".$url_balik."\" },
+                            function(data,status){
+                                //alert('OK BRO SELESAI DALAM');
+                                loading.fadeOut();
+                                tampilkan.html(data);
+                                tampilkan.fadeIn(2000);
+                            });
+                        });
+
+                        $(\"#selesai_simpan$keyisi\").click(function(){
+                            var tampilkan = $(\"#penampung_script\");
+                            $.post('".site_url('/Frontoffice/pra_selesai_simpan')."',{key0:\"".$tampung_key[0]."\",data0:\"".$isi[$tampung_key[0]]."\" },
+                            function(data,status){
+                                tampilkan.html(data);
+                                tampilkan.fadeIn(2000);
+                            });
+                        });
+
                         $(\"#selesai$keyisi\").click(function(){
                             var loading = $(\"#pra_verifikasi\");
                             var tampilkan = $(\"#penampil_verifikasi\");
                             tampilkan.hide();
                             loading.fadeIn(); 
-                            $.post('".site_url('/Frontoffice/selesai')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\" },
+                            $.post('".site_url('/Frontoffice/pra_selesai')."',{key:\"".$tampung_key[1]."\",data:\"".$isi[$tampung_key[1]]."\",key0:\"".$tampung_key[0]."\",data0:\"".$isi[$tampung_key[0]]."\"},
                             function(data,status){
-                                //alert('OK BRO SELESAI DALAM');
+                                //alert(data);
                                 loading.fadeOut();
                                 tampilkan.html(data);
                                 tampilkan.fadeIn(2000);
@@ -367,6 +432,7 @@ class Viewfrommyframework {
                             </div>
                             <div class='modal-body'>
                             <center>
+                            <div id='penampung_script'></div>
                             <div id='pra_verifikasi' style='width:65%;' align='center' >
                             Mohon ditunggu...<br>
                             <i class='fa-3x fas fa-spinner fa-pulse' ".$this->CI->config->item('style_progres_bulat_admin')."></i>
@@ -450,6 +516,39 @@ class Viewfrommyframework {
                             </div>
                             <div class='modal-footer'>
                             <button type='button' class='btn btn-primary' id=\"perbesar_modal\" onclick='$(\"#modal_baca_surat_new_perbesar\").modal(\"show\");'>Perbesar</button>
+                            <button type='button' class='btn btn-primary' data-dismiss='modal'>Close</button>
+                            </div>
+                        </div>
+                        
+                        </div>
+                    </div>
+                ";
+                echo "
+                    <!-- Modal Baca Surat -->
+                    <div class='modal fade' id='modal_untuk_kirim_surat_balasan' role='dialog' style='z-index:100000;'>
+                        <div class='modal-dialog modal-lg'>
+                        
+                        <!-- Modal content-->
+                        <div class='modal-content' ".$this->CI->config->item('style_modal_admin').">
+                            <div class='modal-header'>
+                            <h4 class='modal-title'>e-Sinra ".$this->CI->config->item('nama_opd')." Provinsi Sulawesi Selatan</h4>
+                            <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                            </div>
+                            <div class='modal-body'>
+                            <center>
+                            <div id='pra_unggah_surat_balasan' style='width:65%;' align='center' >
+                            <i class='fa-3x fas fa-spinner fa-pulse' ".$this->CI->config->item('style_progres_bulat_admin')."></i>
+                            <!--
+                            <div class='progress' style='margin-top:50px; height:20px'>
+                                <div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='90' aria-valuemin='0' aria-valuemax='100' style='width:100%'>
+                                mohon tunggu...
+                                </div>
+                            </div>
+                            -->
+                            </center>
+                            <div id=penampil_unggah_surat_balasan align='center' style='width:100%;'></div>
+                            </div>
+                            <div class='modal-footer'>
                             <button type='button' class='btn btn-primary' data-dismiss='modal'>Close</button>
                             </div>
                         </div>

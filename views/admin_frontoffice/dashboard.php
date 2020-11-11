@@ -985,6 +985,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 			    //echo "<br>INI NILAI MODAL tabel SETELAH: ".$this->session->userdata('modal');
 			    //echo "<br>INI NILAI SESSION tabel SETELAH: ".$tabel_ok;
           ?>
+          <?php //kode_perlihatkan ?>
           <script>      
           $(document).ready(function(){
               var loading = $("#pra_tabel");
@@ -1001,6 +1002,9 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
               }else if($this->session->userdata('modal')=='ok_new2') { ?>
                 $.post('<?php echo site_url('/Frontoffice/baca_agenda_9001');?>',{ data:"okbro"},
               <?php $this->session->set_userdata('modal',NULL);$this->session->set_userdata('flag_9001',NULL);
+              }else if($this->session->userdata('modal')=='perlihatkan') { ?>
+                 $.post('<?php echo site_url('/Frontoffice/tampilkan_tabel_terusan_new_verifikasi');?>',{ data:"okbro"},
+              <?php $this->session->set_userdata('modal',NULL);
               }else {?>
               $.post('<?php echo site_url('/Frontoffice/tampilkan_tombol_baca_surat');?>',{ data:"okbro"},
               <?php }?>
