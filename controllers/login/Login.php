@@ -95,7 +95,7 @@ class Login extends MY_Controller {
 					'username' => $user['username']
 				);
 				
-				set_cookie('munirah_muslim',$str_cookie,3600*24);
+				set_cookie('munirah_muslim_user_uptppk',$str_cookie,3600*24);
 				$this->Muser->update_cookie($data_cookie);
 			} 
 			redirect( site_url('Frontoffice/frontoffice_admin') ); 
@@ -110,7 +110,7 @@ class Login extends MY_Controller {
 		{
 			$this->session->unset_userdata('user_uptppk');
 			$this->session->set_userdata('keluar', 'keluar');
-			delete_cookie('munirah_muslim');
+			delete_cookie('munirah_muslim_user_uptppk');
 			redirect(site_url('Frontoffice/index'));
 		}
 

@@ -55,6 +55,40 @@ class Frontoffice extends CI_Controller {
 	}
 
 	//===========================================#0001======================================================================================
+	public function perubah_status_menjadi_dibalas(){
+		$ok=unserialize($this->session->userdata('state_rekord_yang_sedang_diproses'));
+		//ubah dulu status menjadi dibalas
+		//ambil dari session, rekord apa yang membalas surat.
+		//lalu panggil tampilkan_tabel_terusan_new_verifikasi()
+		$kolom_rujukan['nama_kolom']=$ok['key'];
+		$kolom_rujukan['nilai']=$ok['data'];
+		$kolom_target='status_surat';
+		$data[$kolom_target]='dibalas';
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+		$kolom_target='timestamp_dikembalikan';
+		$data[$kolom_target]=implode("-",array (date("d/m/Y"),date("H:i:s"),mt_rand (1000,9999),microtime()));
+		$okfoto=$this->model_frommyframework->update_style_CI_no_alert('surat_terusan_baru',$kolom_rujukan,$data);
+		$this->tampilkan_tabel_terusan_new_verifikasi();
+	}
+
+	public function pra_unggah_surat_frontoffice_balasan(){
+		$yang_diubah=array('key'=>$_POST['key'],'data'=>$_POST['data']);
+		$this->session->set_userdata('state_rekord_yang_sedang_diproses',serialize($yang_diubah));
+		echo "
+		<script>
+		$(document).ready(function(){
+			var tampilkan = $(\"#penampung_form_balasan\");
+			$.post('".$this->config->item('bank_data')."/index.php/Frontoffice/unggah_surat_frontoffice_balasan"."',{isi:\"".$_POST['isi']."\", url_balik:\"".$_POST['url_balik']."\" },
+			function(data,status){
+				tampilkan.html(data);
+				tampilkan.fadeIn(2000);
+			});
+		});
+		</script>
+		<div id=\"penampung_form_balasan\"></div>
+		";
+	}
+	
 	public function pra_selesai(){
 		echo "
 		<script>

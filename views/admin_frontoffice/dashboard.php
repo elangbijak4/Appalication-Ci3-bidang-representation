@@ -1003,7 +1003,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
                 $.post('<?php echo site_url('/Frontoffice/baca_agenda_9001');?>',{ data:"okbro"},
               <?php $this->session->set_userdata('modal',NULL);$this->session->set_userdata('flag_9001',NULL);
               }else if($this->session->userdata('modal')=='perlihatkan') { ?>
-                 $.post('<?php echo site_url('/Frontoffice/tampilkan_tabel_terusan_new_verifikasi');?>',{ data:"okbro"},
+                 $.post('<?php echo site_url('/Frontoffice/perubah_status_menjadi_dibalas');?>',{ data:"okbro"},
               <?php $this->session->set_userdata('modal',NULL);
               }else {?>
               $.post('<?php echo site_url('/Frontoffice/tampilkan_tombol_baca_surat');?>',{ data:"okbro"},

@@ -253,6 +253,7 @@ class Viewfrommyframework {
                     $surat=explode('.',$isi[$nama_kolom_direktori_surat['surat']]);
                     $berkas=explode('.',$isi[$nama_kolom_direktori_surat['berkas']]);
                     $url_balik=$this->CI->enkripsi->enkapsulasiData(site_url("/Frontoffice/frontoffice_admin"));
+                    //$this->CI->session->set_userdata('state_rekord_yang_sedang_diproses',serialize($isi));
                     echo "
                     <script>
 					$(document).ready(function(){
@@ -271,6 +272,21 @@ class Viewfrommyframework {
                         });
 
                         $(\"#unggah_balasan$keyisi\").click(function(){
+                            var loading = $(\"#pra_unggah_surat_balasan\");
+                            var tampilkan = $(\"#penampil_unggah_surat_balasan\");
+                            tampilkan.hide();
+                            loading.fadeIn(); 
+                            $.post('".site_url('/Frontoffice/pra_unggah_surat_frontoffice_balasan')."',{key:\"".$tampung_key[0]."\",data:\"".$isi[$tampung_key[0]]."\",isi:\"".$enkrip_isi."\", url_balik:\"".$url_balik."\"},
+                            //$.post('".$this->CI->config->item('bank_data')."/index.php/Frontoffice/unggah_surat_frontoffice_balasan"."',{isi:\"".$enkrip_isi."\", url_balik:\"".$url_balik."\" },
+                            function(data,status){
+                                //alert('OK BRO SELESAI DALAM');
+                                loading.fadeOut();
+                                tampilkan.html(data);
+                                tampilkan.fadeIn(2000);
+                            });
+                        });
+
+                        $(\"#unggah_balasan_simpan$keyisi\").click(function(){
                             var loading = $(\"#pra_unggah_surat_balasan\");
                             var tampilkan = $(\"#penampil_unggah_surat_balasan\");
                             tampilkan.hide();
