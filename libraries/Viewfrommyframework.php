@@ -4528,9 +4528,10 @@ class Viewfrommyframework {
 
     //popo5
     //Maksudnya tidak dirancangan untuk menampilkan foto pegawai atau apa saja, jadi tabel biasa aja.
-    function penampil_tabel_no_foto($table,$nama_kolom_id,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg'){
+    function penampil_tabel_no_foto($kolom_cari,$nama_kolom_direktori_surat,$table,$nama_kolom_id,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg'){
         $Recordset1=$this->CI->model_frommyframework->user_defined_query_model($query_yang_mau_ditampilkan,$token='andisinra');
         //var_dump($Recordset1);
+        //print_r($nama_kolom_direktori_surat);
         if (!$Recordset1) {
             echo "<center>TABEL YANG BERSESUAIAN KOSONG, SILAHKAN DIISI DULU</center>";
         } else {
@@ -4562,7 +4563,7 @@ class Viewfrommyframework {
                 if(in_array($kolom_direktori,$tampung_key)){
                     echo "<th ><span >Foto</span></th>";
                 }
-                foreach ($tampung_key as $value) {
+                foreach ($tampung_key as $value) {//direktori_surat_masuk
                     echo "<th > $value </th>";
                 } 
                 echo "</tr>";
@@ -4579,9 +4580,42 @@ class Viewfrommyframework {
                     $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$class='btn btn-danger btn-sm',$id='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$atribut=' style="width:36px; margin-bottom:5px;" ',$event='',$label='',$value='Hapus',$value_selected_combo='',$submenu='hapus_aja_tapi_ingat_peringatan_dulu',$aksi='hapus',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
                     //$this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_lihat'.$isi[$tampung_key[0]],$class='btn btn-danger btn-sm',$id='button_ajax_post_CI_lihat'.$isi[$tampung_key[0]],$atribut=' ',$event='',$label='',$value='Lihat',$value_selected_combo='',$submenu='hapus_aja_tapi_ingat_peringatan_dulu',$aksi='hapus',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
                     
-                    echo "<button type=\"button\" class='btn btn-info btn-sm' id=\"".$isi[$tampung_key[0]]."\" name=\"button_lihat".$isi[$tampung_key[0]]."\" style=\"width:36px; margin-bottom:5px;\" data-toggle=\"modal\" data-target=\"#myModal_post\">";
+                    if(isset($isi[$nama_kolom_direktori_surat['surat']])){
+                    echo "<button type=\"button\" class='btn btn-info btn-sm' id=\"lihat".$isi[$tampung_key[0]]."\" name=\"button_lihat".$isi[$tampung_key[0]]."\" style=\"width:36px; margin-bottom:5px;\" data-toggle=\"modal\" data-target=\"#modal_verifikasi\">";
                     echo "<i class='fas fa-eye fa-sm text-white-100'></i>";
                     echo "</button>";
+                        $direktori_surat=$this->CI->enkripsi->strToHex($this->CI->enkripsi->enkripSimetri_data($isi[$nama_kolom_direktori_surat['surat']]));
+                        $direktori_berkas=$this->CI->enkripsi->strToHex($this->CI->enkripsi->enkripSimetri_data($isi[$nama_kolom_direktori_surat['berkas']]));
+                        $surat=explode('.',$isi[$nama_kolom_direktori_surat['surat']]);
+                        $berkas=explode('.',$isi[$nama_kolom_direktori_surat['berkas']]);
+                        echo "
+                                <script>
+                                $(document).ready(function(){
+                                    $(\"#lihat".$isi[$tampung_key[0]]."\").click(function(){
+                                        var loading = $(\"#pra_verifikasi\");
+                                        var tampilkan = $(\"#penampil_verifikasi\");
+                                        var button = $(\"#penampung_script\");
+                                        //alert('lihat keterangan');
+                                        tampilkan.hide();
+                                        loading.fadeIn(); 
+                                        //button.html('<a class=\"btn btn-sm btn-info\" id=\"button".$isi[$tampung_key[0]]."\">Buka Berkas Pendukung</a>');
+                                        //button.fadeIn();
+                                        $.post('".site_url('Frontoffice/tombol_di_penampung_script/button'.$isi[$tampung_key[0]].'/'.$direktori_berkas.'/'.$direktori_surat)."',{ data:\"okbro\"},
+                                        function(data,status){
+                                            button.html(data);
+                                            button.fadeIn(2000);
+                                        });
+                                        $.post('".site_url('Frontoffice/tesopenpdf/'.$direktori_surat)."',{ data:\"okbro\"},
+                                        function(data,status){
+                                            loading.fadeOut();
+                                            tampilkan.html(data);
+                                            tampilkan.fadeIn(2000);
+                                        });
+                                    });
+                                });
+                                </script>
+                        ";
+                    }
                     echo "</td>";
                     /*
                     echo "<td valign=top>";
@@ -4601,6 +4635,44 @@ class Viewfrommyframework {
                 }
                 
                 echo "</table></div>";
+                
+                echo "
+                    <!-- Modal Baca Surat -->
+                    <div class='modal fade' id='modal_verifikasi' role='dialog' style='z-index:100000;'>
+                        <div class='modal-dialog modal-lg' >
+                        
+                        <!-- Modal content-->
+                        <div class='modal-content' ".$this->CI->config->item('style_modal_admin')." >
+                            <div class='modal-header'>
+                            <div align=\"left\"><h4 class='modal-title'>e-Sinra ".$this->CI->config->item('nama_opd')." Provinsi Sulawesi Selatan</h4>
+                            <div id='penampung_script' style='width:100%;color:#fff'></div></div>
+                            <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                            </div>
+                            
+                            <div class='modal-body'>
+                            <center>
+                            <div id='pra_verifikasi' style='width:65%;' align='center' >
+                            Mohon ditunggu...<br>
+                            <i class='fa-3x fas fa-spinner fa-pulse' ".$this->CI->config->item('style_progres_bulat_admin')."></i>
+                            <!--
+                            <div class='progress' style='margin-top:50px; height:20px'>
+                                <div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='90' aria-valuemin='0' aria-valuemax='100' style='width:100%'>
+                                mohon tunggu...
+                                </div>
+                            </div>
+                            -->
+                            </center>
+                            <div id=penampil_verifikasi align='center' style='width:100%;overflow:auto;height:500px;'></div>
+                            </div>
+                            <div class='modal-footer'>
+                            <!--<button type='button' class='btn btn-primary' id=\"perbesar_modal\" onclick='$(\"#modal_baca_surat_new_perbesar\").modal(\"show\");'>Perbesar</button>-->
+                            <button type='button' class='btn btn-primary' data-dismiss='modal' id='close_ok'>Close</button>
+                            </div>
+                        </div>
+                        
+                        </div>
+                    </div>
+                ";
             } else{
                 echo "<center>TABEL YANG BERSESUAIAN KOSONG, SILAHKAN DIISI DULU</center>";
             }

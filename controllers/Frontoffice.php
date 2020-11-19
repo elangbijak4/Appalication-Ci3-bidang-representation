@@ -54,7 +54,67 @@ class Frontoffice extends CI_Controller {
 		$this->load->view('loginpage');
 	}
 
-	#0003
+	#=================================================================0003
+	#Untuk tombol penampung script:
+	public function tombol_di_penampung_script($id=NULL,$berkas=NULL,$surat=NULL){
+		echo "<button class=\"btn btn-primary btn-sm\" id=\"$id\"><i class='fas fa-folder-open fa-sm text-white-100'></i> Buka berkas pendukung</button>";
+		echo "
+		<script>
+		$(document).ready(function(){
+			$(\"#$id\").click(function(){
+				var loading = $(\"#pra_verifikasi\");
+				var tampilkan = $(\"#penampil_verifikasi\");
+				var button = $(\"#penampung_script\");
+				//alert('lihat keterangan');
+				tampilkan.hide();
+				loading.fadeIn(); 
+				$.post('".site_url('Frontoffice/tombol_di_penampung_script_inverse/'.$id.'/'.$berkas.'/'.$surat)."',{ data:\"okbro\"},
+				function(data,status){
+					button.html(data);
+					button.fadeIn(2000);
+				});
+				$.post('".site_url('Frontoffice/tesopenpdf/'.$berkas)."',{ data:\"okbro\"},
+				function(data,status){
+					loading.fadeOut();
+					tampilkan.html(data);
+					tampilkan.fadeIn(2000);
+				});
+			});
+		});
+		</script>
+	";
+	}
+
+	public function tombol_di_penampung_script_inverse($id=NULL,$berkas=NULL,$surat=NULL){
+		echo "<button class=\"btn btn-warning btn-sm\" id=\"inverse$id\"><i class='fas fa-backward fa-sm text-white-100'></i> Buka Kembali Surat</button>";
+		echo "
+		<script>
+		$(document).ready(function(){
+			$(\"#inverse$id\").click(function(){
+				var loading = $(\"#pra_verifikasi\");
+				var tampilkan = $(\"#penampil_verifikasi\");
+				var button = $(\"#penampung_script\");
+				//alert('lihat keterangan');
+				tampilkan.hide();
+				loading.fadeIn(); 
+				$.post('".site_url('Frontoffice/tombol_di_penampung_script/'.$id.'/'.$berkas.'/'.$surat)."',{ data:\"okbro\"},
+				function(data,status){
+					button.html(data);
+					button.fadeIn(2000);
+				});
+				$.post('".site_url('Frontoffice/tesopenpdf/'.$surat)."',{ data:\"okbro\"},
+				function(data,status){
+					loading.fadeOut();
+					tampilkan.html(data);
+					tampilkan.fadeIn(2000);
+				});
+			});
+		});
+		</script>
+	";
+
+	}
+
 	#CRUID new bisa membuka file:
 	public function tampilkan_tabel_cruid_new_with_open($table,$nama_kolom_id,$order='desc'){
 		//$Recordset=$this->user_defined_query_controller_as_array($query='select * from surat_masuk',$token="andisinra");
@@ -71,9 +131,9 @@ class Frontoffice extends CI_Controller {
 		$nama_kolom_direktori_surat=array('surat'=>'direktori_surat_masuk','berkas'=>'direktori_berkas_yg_menyertai');
 		$this->tampil_tabel_cruid($table,$nama_kolom_id,$order,$limit,$currentpage,$page_awal,$jumlah_page_tampil,$mode,$kolom_cari,$nilai_kolom_cari,$kolom_cari_new=NULL,$nama_kolom_direktori_surat);
 	}
-	#end0003
+	#=================================================================end0003
 
-	#0002
+	#=================================================================0002
 	public function lengkapi_kiriman_untuk_log(){
 		$kiriman_dekrip=$this->enkripsi->dekapsulasiData($_POST['kiriman_enkrip']);
 		$kiriman_dekrip[0]=$_POST['idsurat_masuk'];
@@ -87,7 +147,7 @@ class Frontoffice extends CI_Controller {
 	public function pemulihan_link_biar_ga_dobel_insert_saat_refresh(){
 		redirect(site_url('Frontoffice/frontoffice_admin/ok/ok/ok'));
 	}
-	#end0002
+	#=================================================================end0002
 
 	
 	//===========================================TAMBAHAN TOMBOL FRONTOFFICE=============================================================
@@ -12184,8 +12244,8 @@ class Frontoffice extends CI_Controller {
 	public function sanitasi_controller($input){
         return $this->model_frommyframework->sanitasi($input);
 	}
-	
-	public function tampil_tabel_cruid($table,$nama_kolom_id,$order='desc',$limit=20,$currentpage=1,$page_awal=1,$jumlah_page_tampil=4,$mode=NULL,$kolom_cari=NULL,$nilai_kolom_cari=NULL){
+	#popo5
+	public function tampil_tabel_cruid($table,$nama_kolom_id,$order='desc',$limit=20,$currentpage=1,$page_awal=1,$jumlah_page_tampil=4,$mode=NULL,$kolom_cari=NULL,$nilai_kolom_cari=NULL,$kolom_cari_new=NULL,$nama_kolom_direktori_surat=NULL){
 		$awal=($currentpage-1)*$limit;
 		$numrekord=$this->db->count_all($table);
 		$jumlah_halaman=ceil($numrekord/$limit);
@@ -12321,7 +12381,7 @@ class Frontoffice extends CI_Controller {
 		//echo "<br>INI query: ".$query;
 		//$query=$this->sanitasi_controller($query);
 		//echo "<br> INI sehabis disanitasi: ".$query;//popo5
-		$this->penampil_tabel_no_foto_controller($table,$nama_kolom_id,$array_atribut=array("","id=\"myTable\" class=\"table table-condensed table-hover table-striped\"",""),$query,$submenu='',$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg');
+		$this->penampil_tabel_no_foto_controller($kolom_cari,$nama_kolom_direktori_surat,$table,$nama_kolom_id,$array_atribut=array("","id=\"myTable\" class=\"table table-condensed table-hover table-striped\"",""),$query,$submenu='',$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg');
 		echo "
 			<style>
 				#blokpage{
@@ -12826,8 +12886,8 @@ class Frontoffice extends CI_Controller {
 		}
 	}
 
-	public function penampil_tabel_no_foto_controller ($array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar){
-		return $this->viewfrommyframework->penampil_tabel_no_foto($array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori,$direktori_avatar);
+	public function penampil_tabel_no_foto_controller ($kolom_cari,$nama_kolom_direktori_surat,$table,$nama_kolom_id,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar){
+		return $this->viewfrommyframework->penampil_tabel_no_foto($kolom_cari,$nama_kolom_direktori_surat,$table,$nama_kolom_id,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori,$direktori_avatar);
 	}
 
 	//========================END MODUL CRUID=========================================================================

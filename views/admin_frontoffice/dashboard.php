@@ -1072,7 +1072,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
             -->
             </div>
           </center>
-            <div id=penampil_tabel align="center" style='width:100%;overflow:auto;'></div>
+            <div id="penampil_tabel" align="center" style='width:100%;overflow:auto;'></div>
             
             </div>
 
