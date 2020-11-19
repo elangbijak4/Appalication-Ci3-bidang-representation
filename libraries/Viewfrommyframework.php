@@ -25,6 +25,81 @@ class Viewfrommyframework {
         }
     }
 
+    //===========================================#0002======================================================================================
+    function form_combo_database_json($table='table_opd',$opd='opd',$nilai_opd='DINAS PENDIDIKAN',$kolom_target='bidang',$nama_komponen,$class,$id,$atribut,$selected,$id_select_opd=NULL,$keterangan=NULL){
+        //ini yang mestinya bertugas memanggil form_combo_database_json_2
+        echo "
+            <script>
+            $(document).ready(function(){
+                    $(\"#$id_select_opd\").click(function(){
+                    var tampilkan = $(\"#$id\");
+                    var nilai_opd = $(\"#$id_select_opd option:selected\").val();
+                    //alert(nilai_opd);
+                    $.post('".site_url("/Frontoffice/form_combo_database_json_2/").$table."/".$opd."/".$kolom_target."',{id_combo_opd:\"".$id_select_opd."\", nilai_opd:nilai_opd, id_select_bidang:\"".$id."\",selected:\"".$selected."\"},
+                    function(data,status){
+                        tampilkan.html(data);
+                        tampilkan.fadeIn(2000);
+                    });
+                });
+            });
+            </script>
+		";
+        echo "<select class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut.">";
+		echo "<option value=\"\">$keterangan</option>";
+		echo "</select>";
+
+    }
+
+    function form_combo_database_json_ditujukanke($table='table_opd',$opd='opd',$nilai_opd='DINAS PENDIDIKAN',$kolom_target='bidang',$nama_komponen,$class,$id,$atribut,$selected){
+        //ini yang mestinya bertugas memanggil form_combo_database_json_2
+        echo "
+            <script>
+            $(document).ready(function(){
+                var tampilkan = $(\"#$id\");
+                $.post('".site_url("/Frontoffice/form_combo_database_json_ditujukanke_2/").$table."/".$opd."/".$kolom_target."',{id_select_bidang:\"".$id."\",selected:\"".$selected."\"},
+                function(data,status){
+                    tampilkan.html(data);
+                    tampilkan.fadeIn(2000);
+                });
+            });
+            </script>
+		";
+        echo "<select class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut.">";
+		echo "<option value=\"\" >Klik untuk memilih</option>";
+		echo "</select>";
+
+    }
+
+    function form_combo_database_json_old($table='table_opd',$opd='opd',$nilai_opd='DINAS PENDIDIKAN',$kolom_target='bidang',$nama_komponen,$class,$id,$atribut,$selected,$id_select_opd=NULL){
+        //ini yang mestinya bertugas memanggil form_combo_database_json_2
+        echo "
+            <script>
+            $(document).ready(function(){
+                    $(\"#$id_select_opd\").click(function(){
+                    var tampilkan = $(\"#penampung_form_balasan$id_select_opd\");
+                    var nilai_opd = $(\"#$id_select_opd option:selected\").val();
+                    //alert(nilai_opd);
+                    $.post('".site_url("/Frontoffice/form_combo_database_json_2/").$table."/".$opd."/".$kolom_target."',{id_combo_opd:\"".$id_select_opd."\", nilai_opd:nilai_opd, nama_komponen:\"".$nama_komponen."\", class:\"".$class."\", id:\"".$id."\", atribut:\"".$atribut."\", selected:\"".$selected."\"},
+                    function(data,status){
+                        tampilkan.html(data);
+                        tampilkan.fadeIn(2000);
+                    });
+                });
+            });
+            </script>
+            <div id=\"penampung_form_balasan$id_select_opd\"></div>
+		";
+
+    }
+
+    function form_combo_database_json_sub_bidang($table='table_opd',$opd='opd',$bidang='bidang',$nilai_opd='DINAS PENDIDIKAN',$kolom_target='sub_bidang',$nama_komponen,$class,$id,$atribut,$selected,$id_select_opd=NULL,$id_select_bidang=NULL,$keterangan=NULL){
+        //ini yang mestinya bertugas memanggil form_combo_database_json_2
+        echo "<select class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut." >";
+		echo "<option value=\"\" >$keterangan</span></option>";
+		echo "</select>";
+    }
+    //===========================================END #0002==================================================================================
+
     //===========================================TAMBAHAN KHUSUS UNTUK CRUID VERIFIKASI PERBAIKAN===========================================
     function penampil_tabel_no_foto_untuk_surat_masuk_frontoffice_surat_masuk_verifikasi ($kolom_cari,$nama_kolom_direktori_surat,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg'){
         $Recordset1=$this->CI->model_frommyframework->user_defined_query_model($query_yang_mau_ditampilkan,$token='andisinra');
@@ -3298,6 +3373,39 @@ class Viewfrommyframework {
             $this->form_combo_database($type='combo_database',$nama_komponen,$class,$id,$atribut,$kolom,$tabel,$selected);
             //array_push($perekam_id,rekam($type,$nama_komponen,$class,$id,$atribut,$event,$label,$value));
             break;
+        case ("combo_database_json"):
+            $kolom_target=$value[0];//'sub_bidang'
+            $opd=$value[1];//'bidang'
+            $table=$value[2];
+            $id_select_opd=$value[3];
+            $keterangan=$value[4];
+            //apakah $value? yang ini ==> contoh $coba[8][7]=array("bidang","opd",'table_opd');
+            $selected=$value_selected_combo;
+            $this->form_combo_database_json($table,$opd,$nilai_opd='DINAS PENDIDIKAN',$kolom_target,$nama_komponen,$class,$id,$atribut,$selected,$id_select_opd,$keterangan);
+            //array_push($perekam_id,rekam($type,$nama_komponen,$class,$id,$atribut,$event,$label,$value));
+            break;
+        case ("combo_database_json_2"):
+            $kolom_target=$value[0];
+            $bidang=$value[1];
+            $opd=$value[2];
+            $table=$value[3];
+            $id_select_opd=$value[4];
+            $id_select_bidang=$value[5];
+            $keterangan=$value[6];
+            //apakah $value? yang ini ==> contoh $coba[8][7]=array("bidang","opd",'table_opd');
+            $selected=$value_selected_combo;
+            $this->form_combo_database_json_sub_bidang($table,$opd,$bidang,$nilai_opd='DINAS PENDIDIKAN',$kolom_target,$nama_komponen,$class,$id,$atribut,$selected,$id_select_opd,$id_select_bidang,$keterangan);
+            //array_push($perekam_id,rekam($type,$nama_komponen,$class,$id,$atribut,$event,$label,$value));
+            break;
+        case ("combo_database_json_3"):
+            $kolom_target=$value[0];//'sub_bidang'
+            $opd=$value[1];//'bidang'
+            $table=$value[2];
+            //apakah $value? yang ini ==> contoh $coba[8][7]=array("bidang","opd",'table_opd');
+            $selected=$value_selected_combo;
+            $this->form_combo_database_json_ditujukanke($table,$opd,$nilai_opd='DINAS PENDIDIKAN',$kolom_target,$nama_komponen,$class,$id,$atribut,$selected);
+            //array_push($perekam_id,rekam($type,$nama_komponen,$class,$id,$atribut,$event,$label,$value));
+            break;
         case ("button_iframe"):
             //Muat parameter ke dalam cara URI CI:
             //Hati-hati menggunakan ini, karena itu berarti method yang mau dipanggil pada $target_ajax harus memiliki jumlah argumen yang sama dengan ukuran $perekam_id_untuk_button_ajax. 
@@ -3835,7 +3943,14 @@ class Viewfrommyframework {
                       });
                     ";
                     echo "</script>";
-                    echo "<input type=\"button\" class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut." data-toggle=\"modal\" data-target=\"#myModal_post\" value=\"".$value."\" />";
+                    //echo "<input type=\"button\" class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut." data-toggle=\"modal\" data-target=\"#myModal_post\" value=\"".$value."\" />";
+                    #0004
+                    echo "<button type=\"button\" class=\"".$class."\" id=\"".$id."\" name=\"".$nama_komponen."\" ".$atribut." data-toggle=\"modal\" data-target=\"#myModal_post\" value=\"".$value."\" >";
+                    if($value=='Rincian') echo "<i class='fas fa-list fa-sm text-white-100'></i>";//popo5
+                    if($value=='Edit') echo "<i class='fas fa-edit fa-sm text-white-100'></i>";
+                    if($value=='Hapus') echo "<i class='fas fa-trash fa-sm text-white-100'></i>";
+                    echo "</button>";
+                    #end0004
                     echo "
                         <!-- Modal -->
                         <div class=\"modal fade\" id=\"myModal_post\" role=\"dialog\">
@@ -4411,6 +4526,7 @@ class Viewfrommyframework {
         }
     }
 
+    //popo5
     //Maksudnya tidak dirancangan untuk menampilkan foto pegawai atau apa saja, jadi tabel biasa aja.
     function penampil_tabel_no_foto($table,$nama_kolom_id,$array_atribut,$query_yang_mau_ditampilkan,$submenu,$kolom_direktori='direktori',$direktori_avatar='/public/img/no-image.jpg'){
         $Recordset1=$this->CI->model_frommyframework->user_defined_query_model($query_yang_mau_ditampilkan,$token='andisinra');
@@ -4458,9 +4574,14 @@ class Viewfrommyframework {
                     //$tampung=array_values($isi); 
                     $i++;
                     echo "<td valign=top>";
-                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_rincian'.$isi[$tampung_key[0]],$class='btn btn-success btn-xs',$id='button_ajax_post_CI_rincian'.$isi[$tampung_key[0]],$atribut=' style="width:75px;" ',$event='',$label='',$value='Rincian',$value_selected_combo='',$submenu='rincian_penampil_tabel_rincian',$aksi='rincian',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
-                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_edit'.$isi[$tampung_key[0]],$class='btn btn-primary btn-xs',$id='button_ajax_post_CI_edit'.$isi[$tampung_key[0]],$atribut=' style="width:75px;" ',$event='',$label='',$value='Edit',$value_selected_combo='',$submenu='edit_penampil_tabel_edit',$aksi='edit',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
-                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$class='btn btn-danger btn-xs',$id='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$atribut=' style="width:75px;" ',$event='',$label='',$value='Hapus',$value_selected_combo='',$submenu='hapus_aja_tapi_ingat_peringatan_dulu',$aksi='hapus',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
+                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_rincian'.$isi[$tampung_key[0]],$class='btn btn-success btn-sm',$id='button_ajax_post_CI_rincian'.$isi[$tampung_key[0]],$atribut=' style="width:36px; margin-bottom:5px;" ',$event='',$label='',$value='Rincian',$value_selected_combo='',$submenu='rincian_penampil_tabel_rincian',$aksi='rincian',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
+                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_edit'.$isi[$tampung_key[0]],$class='btn btn-primary btn-sm',$id='button_ajax_post_CI_edit'.$isi[$tampung_key[0]],$atribut=' style="width:36px; margin-bottom:5px;" ',$event='',$label='',$value='Edit',$value_selected_combo='',$submenu='edit_penampil_tabel_edit',$aksi='edit',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
+                    $this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$class='btn btn-danger btn-sm',$id='button_ajax_post_CI_hapus'.$isi[$tampung_key[0]],$atribut=' style="width:36px; margin-bottom:5px;" ',$event='',$label='',$value='Hapus',$value_selected_combo='',$submenu='hapus_aja_tapi_ingat_peringatan_dulu',$aksi='hapus',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
+                    //$this->buat_komponen_form($type='button_ajax_post_CI',$nama_komponen='button_ajax_post_CI_lihat'.$isi[$tampung_key[0]],$class='btn btn-danger btn-sm',$id='button_ajax_post_CI_lihat'.$isi[$tampung_key[0]],$atribut=' ',$event='',$label='',$value='Lihat',$value_selected_combo='',$submenu='hapus_aja_tapi_ingat_peringatan_dulu',$aksi='hapus',$perekam_id_untuk_button_ajax=NULL,$target_ajax="Frontoffice/gerbang/".$submenu,$data_ajax="{\"".$tampung_key[0]."\":\"".$isi[$tampung_key[0]]."\",\"nama_tabel\":\"".$table."\",\"nama_kolom_id\":\"".$nama_kolom_id."\" }");
+                    
+                    echo "<button type=\"button\" class='btn btn-info btn-sm' id=\"".$isi[$tampung_key[0]]."\" name=\"button_lihat".$isi[$tampung_key[0]]."\" style=\"width:36px; margin-bottom:5px;\" data-toggle=\"modal\" data-target=\"#myModal_post\">";
+                    echo "<i class='fas fa-eye fa-sm text-white-100'></i>";
+                    echo "</button>";
                     echo "</td>";
                     /*
                     echo "<td valign=top>";

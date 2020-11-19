@@ -60,6 +60,40 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
       <div class="sidebar-heading">
         Interface
       </div>
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed kelas_header_dashboard" href="#" data-toggle="collapse" data-target="#collapseAgenda_unggah_frontoffice" aria-expanded="true" aria-controls="collapseAgenda_unggah_frontoffice">
+          <i class="fas fa-fw fa-book"></i>
+          <span>Unggah ke Fronoffice</span>
+        </a>
+        <div id="collapseAgenda_unggah_frontoffice" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded" onclick='$("#cetak_laporan").show();$("#cetak_laporan_periodik_agenda").hide();'>
+            <a class="collapse-item" style="cursor:pointer;" id="buka_frontoffice"><button class="btn btn-info btn-xs">Front Office</button></a>
+            <!--<a class="collapse-item" style="cursor:pointer;" id="lihat_bankdata" >Lihat Bankdata</a>-->
+          </div>
+        </div>
+      </li>
+
+      <?php 
+      $base=site_url('Frontoffice/frontoffice_admin');
+      $alamat=$this->enkripsi->enkapsulasiData($base);
+      ?>
+      <script>      
+        $(document).ready(function(){
+          $('#buka_frontoffice').click(function(){
+            var loading = $('#pra_tabel');
+            var tampilkan = $('#penampil_tabel');
+            tampilkan.hide();
+            loading.fadeIn(); 
+            $.post('<?php echo site_url('/Frontoffice/buka_frontoffice/'.$alamat); ?>',{ data:'okbro'},
+            function(data,status){
+              loading.fadeOut();
+              tampilkan.html(data);
+              tampilkan.fadeIn(2000);
+            });
+          });
+        });
+      </script> 
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
@@ -266,29 +300,6 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
       <?php 
       $tables = $this->db->list_tables();
       ?>
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-database"></i>
-          <span>CRUID Basisdata</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Nama Tabel:</h6>
-            <input class="form-control" style="width:80%; margin-left:20px;" id="searchTable" type="text" placeholder="Search table...">
-            <div id="myDIV" onclick='$("#cetak_laporan").show();$("#cetak_laporan_periodik_agenda").hide();'>
-            <?php foreach ($tables as $key=>$table) { ?>
-            <?php if($table!=='surat_balasan_tamupegawai'){?>
-            <a class="collapse-item" style="cursor:pointer;" id="<?php echo $table; ?>"><?php 
-              $ok=explode('_',$table);
-              $ok_lagi=ucwords(implode(' ',$ok));
-              echo $ok_lagi; ?></a>
-            <?php }else{ ?>
-            <a class="collapse-item" style="cursor:pointer;" id="<?php echo $table; ?>">Surat Balasan TamuPeg</a>
-          <?php }} ?>
-            </div><!--myDIV-->
-          </div>
-        </div>
-      </li>
 
       <script>      
 			<?php
@@ -301,7 +312,8 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
                   var tampilkan = $(\"#penampil_tabel\");
                   tampilkan.hide();
                   loading.fadeIn(); 
-                  $.post('".site_url("/Frontoffice/tampil_tabel_cruid/".$table."/".$fields[0]."/desc")."',{ data:\"okbro\"},
+                  $.post('".site_url("/Frontoffice/tampilkan_tabel_cruid_new_with_open/".$table."/".$fields[0]."/desc")."',{ data:\"okbro\"},
+                  //$.post('".site_url("/Frontoffice/tampil_tabel_cruid/".$table."/".$fields[0]."/desc")."',{ data:\"okbro\"},
                   function(data,status){
                     loading.fadeOut();
                     tampilkan.html(data);
@@ -380,6 +392,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
             <a class="collapse-item" style="cursor:pointer;" id="notifikasi_surat_ok">Notifikasi Surat</a>
             <a class="collapse-item" style="cursor:pointer;" id="notifikasi_nota">Notifikasi Nota</a>
             <a class="collapse-item" href="<?php echo site_url('Frontoffice/frontoffice_index'); ?>"><button class="btn btn-info btn-xs">Front Office</button></a>
+            
           </div>
         </div>
       </li>
@@ -447,59 +460,32 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages_subbidang" aria-expanded="true" aria-controls="collapsePages">
-          <i class="fas fa-fw fa-folder"></i>
-          <span>Sub Bidang</span>
+          <!--<i class="fas fa-fw fa-folder"></i>-->
+          <i class="fas fa-fw fa-database"></i>
+          <span>Kelola Basisdata</span >
         </a>
         <div id="collapsePages_subbidang" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Link ke Sub Bidang</h6>
-            <a class="collapse-item" href="#">Underconstruction1</a>
-            <a class="collapse-item" href="#">Underconstruction2</a>
-            <a class="collapse-item" href="#">Underconstruction3</a>
+          <div class="bg-white py-2 collapse-inner rounded" onclick='$("#cetak_laporan").show();$("#cetak_laporan_periodik_agenda").hide();'>
+            <h6 class="collapse-header">Pilih nama tabel</h6>
+            <!---CRUID DATABASE--->
+            <hr>
+            <!--<h6 class="collapse-header">CRUID Tabel:</h6>-->
+            <input class="form-control" style="width:80%; margin-left:20px;" id="searchTable" type="text" placeholder="Search table...">
+            <div id="myDIV" onclick='$("#cetak_laporan").show();$("#cetak_laporan_periodik_agenda").hide();'>
+            <?php foreach ($tables as $key=>$table) { ?>
+            <?php if($table!=='surat_balasan_tamupegawai'){?>
+            <a class="collapse-item" style="cursor:pointer;" id="<?php echo $table; ?>"><?php 
+              $ok=explode('_',$table);
+              $ok_lagi=ucwords(implode(' ',$ok));
+              echo $ok_lagi; ?></a>
+            <?php }else{ ?>
+            <a class="collapse-item" style="cursor:pointer;" id="<?php echo $table; ?>">Surat Balasan TamuPeg</a>
+            <?php }} ?>
+            </div><!--myDIV-->
+            <!---END CRUID DATABASE--->
+
           </div>
         </div>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading -->
-      <div class="sidebar-heading">
-        Addons
-      </div>
-
-      <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-          <i class="fas fa-fw fa-folder"></i>
-          <span>Pages</span>
-        </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Login Screens:</h6>
-            <a class="collapse-item" href="#">Login</a>
-            <a class="collapse-item" href="#">Register</a>
-            <a class="collapse-item" href="#">Forgot Password</a>
-            <div class="collapse-divider"></div>
-            <h6 class="collapse-header">Other Pages:</h6>
-            <a class="collapse-item" href="#">404 Page</a>
-            <a class="collapse-item" href="#">Blank Page</a>
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Charts -->
-      <li class="nav-item">
-        <a class="nav-link" href="#"><!--charts.html">-->
-          <i class="fas fa-fw fa-chart-area"></i>
-          <span>Charts</span></a>
-      </li>
-
-      <!-- Nav Item - Tables -->
-      <li class="nav-item">
-        <a class="nav-link" href="#"><!--tables.html">-->
-          <i class="fas fa-fw fa-table"></i>
-          <span>Tables</span></a>
       </li>
 
       <!-- Divider -->
@@ -1138,6 +1124,43 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
       </div>
     </div>
   </div>
+
+<?php
+
+  #0002kiriman_enkrip
+  if(isset($gagal)&&($gagal=='gagal')){
+    alert("Gagal mengunggah surat...");
+    $this->session->set_userdata('flag0002',NULL);
+  }else{
+    if(isset($kiriman_enkrip)){
+      $kiriman_dekrip=$this->enkripsi->dekapsulasiData($kiriman_enkrip);
+      //print_r($kiriman_dekrip);
+      $kiriman_enkrip_29=$this->enkripsi->enkapsulasiData($kiriman_dekrip[29]);
+      $this->session->set_userdata('flag0002',NULL);
+      //Lakukan perekaman ke log surat masuk di bankdata.
+      echo "
+      <script>
+      $(document).ready(function(){
+          var tampilkan = $(\"#status_kirim_log_ke_bankdata\");
+          $.post('".$this->config->item('link_frontoffice')."index.php/Frontoffice/cari_tau_id_surat_masuk/digest_signature/".$kiriman_enkrip_29."/idsurat_masuk',{ data:\"okbro\"},
+          function(data,status){
+            $.post('".site_url('/Frontoffice/lengkapi_kiriman_untuk_log/')."',{ idsurat_masuk:data,kiriman_enkrip:\"".$kiriman_enkrip."\"},
+            function(data,status){
+              $.post('".$this->config->item('bank_data')."/index.php/Frontoffice/insersi_ke_tabel_log_surat_frontoffice/"."'+data,{ data_enkrip:data},
+              function(data,status){
+                //tampilkan.html(data);
+                alert('Surat sukses diunggah...');
+              });
+            });
+          });
+        });
+      </script>
+      ";
+    }
+  }
+  
+  #end0002kiriman_enkrip
+?>
 
 <?php
   if(isset($data_post_enkrip_hex) || isset($pesan_kirim_surat) || isset($pesan_kirim_berkas)) {
