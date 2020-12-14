@@ -35,6 +35,7 @@ $config['nama_opd_panjang']='BADAN KEPEGAWAIAN DAERAH';
 $config['nama_landingpage']=$config['base_domain'].'/sistrabkdsulsel-ver02';
 $config['nama_bidang']='UPT PPK BKD Provinsi Sulawesi Selatan';
 $config['nama_bidang_pendek']='UPT PPK';
+$config['nama_bidang_sesuai_di_bankdata']='UPT PENILAIAN POTENSI DAN KOMPETENSI';
 $config['link_frontoffice']=$config['base_domain'].'/front-office-depan/';
 $config['link_sekretariat']=$config['base_domain'].'/sekretariat-bkd/';
 $config['situs_induk']='https://bkd.sulselprov.go.id';
